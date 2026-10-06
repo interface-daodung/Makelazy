@@ -4,11 +4,11 @@
 ;   iscc installer\Makelazy.iss
 ; Kết quả: dist\Makelazy-Setup-0.1.0.exe
 ;
-; Cài per-user (HKCU, không cần admin). Tự đăng ký Open-With cho Makefile
-; lúc cài, tự gỡ lúc uninstall (qua --register/--unregister --silent).
+; Cài toàn máy vào {autopf} (C:\Program Files) — yêu cầu UAC admin.
+; Tự đăng ký Open-With cho Makefile lúc cài, tự gỡ lúc uninstall (qua --register/--unregister --silent).
 
 #define MyAppName "Makelazy"
-#define MyAppVersion "0.1.0"
+#define MyAppVersion "1.0.0"
 #define MyAppPublisher "Makelazy"
 #define MyAppExeName "Makelazy.exe"
 #define DotNetUrl "https://aka.ms/dotnet/10.0/windowsdesktop-runtime-win-x64.exe"
@@ -18,9 +18,9 @@ AppId={{1D0557CF-B90C-4A01-A804-7382759A4581}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
-DefaultDirName={localappdata}\{#MyAppName}
+DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
-PrivilegesRequired=lowest
+PrivilegesRequired=admin
 OutputDir=..\dist
 OutputBaseFilename=Makelazy-Setup-{#MyAppVersion}
 SetupIconFile=..\MakeLazy.ico
@@ -32,7 +32,7 @@ CloseApplications=yes
 CloseApplicationsFilter={#MyAppExeName}
 
 [Files]
-Source: "..\src\Makelazy.App\bin\Release\net10.0-windows\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
+Source: "..\src\Makelazy.App\bin\Release\net10.0-windows\win-x64\publish\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs; Excludes: "*.pdb"
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"

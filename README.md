@@ -39,7 +39,7 @@ Nếu máy **chưa cài GNU Make**, Makelazy tự fallback: chạy thẳng *reci
 
 Tải `Makelazy-Setup-<version>.exe` từ trang [Releases](../../releases). Setup sẽ:
 
-- Cài per-user vào `%LocalAppData%\Makelazy` (không cần admin).
+- Cài vào **`C:\Program Files\Makelazy`** (máy đòi quyền admin/UAC — đúng kiểu app "xịn").
 - Tự đóng app đang chạy khi cài (`CloseApplications`).
 - Kiểm tra **.NET 10 Desktop Runtime**; thiếu thì mở trang tải và dừng.
 - Tự chạy `--register --silent` để ghim Open-With; lúc gỡ cài đặt thì tự `--unregister`.
@@ -62,7 +62,6 @@ src\Makelazy.App\bin\Release\net10.0-windows\Makelazy.exe [đường-dẫn-Makef
 - Chọn target → bấm **▶**. Mỗi lần chạy là một tab terminal riêng.
 - Gõ stdin ở ô dưới tab, **■** để dừng, **✕** để đóng tab.
 - Đổi sáng/tối bằng nút 🌙/☀️.
-- Muốn xem demo màu ANSI: mở `tests/colortest/Makefile` và chạy các target `naive` / `smart` / `progress`.
 
 ## Dòng lệnh (CLI)
 
@@ -83,10 +82,10 @@ Makelazy.exe --version                    # phiên bản
 ```powershell
 dotnet build Makelazy.slnx -c Release
 iscc installer\Makelazy.iss
-# Kết quả: dist\Makelazy-Setup-0.1.0.exe
+# Kết quả: dist\Makelazy-Setup-1.0.0.exe
 ```
 
-Đổi version: sửa **đồng thời** `Version` trong `src/Makelazy.App/Makelazy.App.csproj` và `MyAppVersion` trong `installer/Makelazy.iss`.
+Install sẽ cài vào `{autopf}` (**C:\Program Files\Makelazy**) và yêu cầu quyền admin. Đổi version: sửa **đồng thời** `Version` trong `src/Makelazy.App/Makelazy.App.csproj` và `MyAppVersion` trong `installer/Makelazy.iss`.
 
 ## Kiến trúc & thư mục
 
@@ -102,7 +101,6 @@ src/Makelazy.App/
 │   ├── SingleInstance.cs     # chống chạy 2 instance
 │   └── ThemeStore.cs         # lưu theme vào %AppData%
 installer/Makelazy.iss        # script Inno Setup
-tests/colortest/              # Makefile demo màu ANSI
 Makefile.sample               # đừng nhầm: đây chỉ là file mẫu để test Makelazy 🙂
 ```
 
