@@ -6,6 +6,7 @@
         MinHeight="520" MinWidth="860"
         ResizeMode="CanResizeWithGrip"
         AllowDrop="True"
+        Icon="MakeLazy.ico"
         Background="{DynamicResource WinBg}">
     <Window.Resources>
         <local:StringJoinConverter x:Key="Join"/>
@@ -133,15 +134,8 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <Border Width="32" Height="32" CornerRadius="8" VerticalAlignment="Center">
-                        <Border.Background>
-                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
-                                <GradientStop Color="#22D3EE" Offset="0"/>
-                                <GradientStop Color="#8B5CF6" Offset="1"/>
-                            </LinearGradientBrush>
-                        </Border.Background>
-                        <TextBlock Text="⚡" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                    </Border>
+                    <Image Width="32" Height="32" Source="MakeLazy.ico"
+                           RenderOptions.BitmapScalingMode="HighQuality" VerticalAlignment="Center"/>
                     <StackPanel Margin="10,0,0,0" VerticalAlignment="Center">
                         <TextBlock FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource Text1}">
                             Makelazy <Run Foreground="{DynamicResource Accent}">· Makefile Runner</Run>

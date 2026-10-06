@@ -12,6 +12,10 @@
     <Version>0.1.0</Version>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Resource Include="MakeLazy.ico" />
+  </ItemGroup>
+
   <!-- Nhánh native-wpf: UI WPF thuần, KHÔNG dùng WebView2 -->
 
 </Project>
