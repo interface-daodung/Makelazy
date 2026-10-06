@@ -1,0 +1,5 @@
+{
+    "files.exclude": {
+        "src/Makelazy.App/obj": true
+    }
+}

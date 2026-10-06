@@ -373,13 +373,15 @@ public partial class MainWindow : Window
     {
         dot = new System.Windows.Shapes.Ellipse { Width = 10, Height = 10, Fill = RunningBrush, VerticalAlignment = System.Windows.VerticalAlignment.Center };
 
-        var header = new StackPanel { Orientation = Orientation.Horizontal };
+        var header = new StackPanel { Orientation = Orientation.Horizontal, VerticalAlignment = System.Windows.VerticalAlignment.Center };
         header.Children.Add(dot);
         titleText = new TextBlock
         {
             Text = $"{target} #{id}", FontFamily = new FontFamily("Consolas"),
             FontSize = 11, Foreground = Res("Text1"),
             Margin = new Thickness(6, 0, 0, 0), VerticalAlignment = System.Windows.VerticalAlignment.Center,
+            MaxWidth = 140, TextTrimming = TextTrimming.CharacterEllipsis,
+            ToolTip = $"{target} #{id}",
         };
         header.Children.Add(titleText);
         exitText = new TextBlock
@@ -475,13 +477,32 @@ public partial class MainWindow : Window
             Background = Res("CardBg"),
             BorderBrush = Res("Border1"),
             BorderThickness = new Thickness(1),
-            CornerRadius = new CornerRadius(12),
+            CornerRadius = new CornerRadius(0, 0, 12, 12),
             Padding = new Thickness(8),
-            Margin = new Thickness(12),
+            // Top = 0 để card dính sát hàng tab (tab active Margin bottom -1
+            // sẽ đè lên viền top của card → hiệu ứng "nối liền").
+            // Bo góc trên = 0 để mép trên là đường thẳng, không hở.
+            Margin = new Thickness(12, 0, 12, 12),
             Child = body,
         };
 
-        return new TabItem { Header = header, Content = container, Tag = id };
+        var tab = new TabItem
+        {
+            Header = header,
+            Content = container,
+            Tag = id,
+            ToolTip = $"{target} #{id} — chuột giữa để đóng",
+        };
+        // Chuột giữa đóng tab kiểu VS Code / browser
+        tab.MouseDown += (_, e) =>
+        {
+            if (e.ChangedButton == System.Windows.Input.MouseButton.Middle)
+            {
+                CloseTab(sessionId);
+                e.Handled = true;
+            }
+        };
+        return tab;
     }
 
     private void KillSession(string sessionId)

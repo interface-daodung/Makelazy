@@ -75,25 +75,47 @@
             </Setter>
         </Style>
 
-        <!-- Tab bo tròn góc trên -->
+        <!-- Tab kiểu VS Code: 1 hàng + scroll ngang, border overlap 1px cho khít.
+             Mấu chốt để không thấy "đường cắt" ở chỗ nối tab-card:
+             viền tab active PHẢI cùng màu viền card (Border1), nền tab = nền card,
+             tab đè xuống -1px che mất viền top của card ngay dưới tab.
+             Màu accent (cyan) chỉ nằm ở thanh mỏng trên đỉnh, không vẽ quanh tab. -->
         <Style x:Key="RoundedTabItem" TargetType="TabItem">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TabItem">
-                        <Border x:Name="Bd" CornerRadius="10,10,0,0"
-                                Background="{DynamicResource CardBg}"
+                        <Border x:Name="Bd" CornerRadius="8,8,0,0"
+                                Background="{DynamicResource SubtleBg}"
                                 BorderBrush="{DynamicResource Border1}"
                                 BorderThickness="1,1,1,0"
-                                Padding="10,7" Margin="3,0,3,0">
-                            <ContentPresenter ContentSource="Header"/>
+                                Padding="0" Margin="0,0,-1,0">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                </Grid.RowDefinitions>
+                                <!-- Thanh accent đè lên viền top (Margin top -1) nên không tạo gờ đôi -->
+                                <Border x:Name="AccentBar" Grid.Row="0" Height="3" Margin="0,-1,0,0"
+                                        CornerRadius="8,8,0,0" Background="Transparent"/>
+                                <ContentPresenter Grid.Row="1" ContentSource="Header" Margin="8,0,8,5"/>
+                            </Grid>
                         </Border>
                         <ControlTemplate.Triggers>
+                            <!-- Active: cùng nền + cùng viền với card output, đè -1px xuống để nối liền -->
                             <Trigger Property="IsSelected" Value="True">
-                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SubtleBg}"/>
-                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource TabSelBorder}"/>
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource CardBg}"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource Border1}"/>
+                                <Setter TargetName="Bd" Property="Panel.ZIndex" Value="10"/>
+                                <Setter TargetName="Bd" Property="Margin" Value="0,0,-1,-1"/>
+                                <Setter TargetName="AccentBar" Property="Background" Value="{DynamicResource TabSelBorder}"/>
                             </Trigger>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource TabSelBorder}"/>
+                                <Setter TargetName="AccentBar" Property="Background" Value="{DynamicResource TabSelBorder}"/>
+                            </Trigger>
+                            <!-- Tab chưa chọn hơi mờ để tab active nổi bật -->
+                            <Trigger Property="IsSelected" Value="False">
+                                <Setter TargetName="Bd" Property="Opacity" Value="0.85"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -113,8 +135,16 @@
                                 <RowDefinition Height="Auto"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            <TabPanel Grid.Row="0" Panel.ZIndex="1" Margin="10,6,10,0"
-                                      IsItemsHost="True" Background="Transparent"/>
+                            <!-- ScrollViewer cho TabPanel vô hạn chiều ngang:
+                                 TabPanel không wrap nhiều hàng nữa mà scroll 1 hàng kiểu VS Code.
+                                 Margin trái/phải = 12 khớp mép card output để chỗ nối pixel-exact. -->
+                            <ScrollViewer Grid.Row="0" Panel.ZIndex="1" Margin="12,6,12,0"
+                                          HorizontalScrollBarVisibility="Auto"
+                                          VerticalScrollBarVisibility="Disabled"
+                                          Background="Transparent" Focusable="False"
+                                          PanningMode="HorizontalOnly">
+                                <TabPanel IsItemsHost="True" Background="Transparent"/>
+                            </ScrollViewer>
                             <Border Grid.Row="1" Background="Transparent" BorderThickness="0" Padding="0">
                                 <ContentPresenter ContentSource="SelectedContent"/>
                             </Border>
