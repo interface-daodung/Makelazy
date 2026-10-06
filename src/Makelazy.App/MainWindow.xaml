@@ -2,8 +2,9 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:Makelazy.App"
-        Title="Makelazy — Makefile Runner (Native)" Height="760" Width="1180"
-        MinHeight="520" MinWidth="860"
+        Title="Makelazy — Makefile Runner (Native)" Height="640" Width="1060"
+        MinHeight="480" MinWidth="800"
+        WindowStartupLocation="CenterScreen"
         ResizeMode="CanResizeWithGrip"
         AllowDrop="True"
         Icon="MakeLazy.ico"
@@ -140,7 +141,7 @@
                         <TextBlock FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource Text1}">
                             Makelazy <Run Foreground="{DynamicResource Accent}">· Makefile Runner</Run>
                         </TextBlock>
-                        <TextBlock x:Name="FilePathText" FontSize="11" Foreground="{DynamicResource Text2}" TextTrimming="CharacterEllipsis" MaxWidth="520"
+                        <TextBlock x:Name="FilePathText" FontSize="11" Foreground="{DynamicResource Text2}" TextTrimming="CharacterEllipsis" MaxWidth="420"
                                    Text="Chưa mở Makefile — bấm “Mở Makefile” hoặc kéo-thả file vào cửa sổ"/>
                     </StackPanel>
                 </StackPanel>
@@ -172,7 +173,7 @@
         <!-- Main -->
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="340" MinWidth="260" MaxWidth="480"/>
+                <ColumnDefinition Width="300" MinWidth="240" MaxWidth="420"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
