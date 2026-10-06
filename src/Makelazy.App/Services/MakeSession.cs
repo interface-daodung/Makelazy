@@ -82,6 +82,12 @@ public sealed class MakeSession : IDisposable
             },
             EnableRaisingEvents = true,
         };
+        // Ép tool kiểu pytest/npm/git... phải nhả màu khi chạy trong app:
+        // chúng tự tắt màu khi thấy stdout là pipe. Chỉ set khi user chưa set.
+        SetEnvIfAbsent(_proc.StartInfo.Environment, "FORCE_COLOR", "1");
+        SetEnvIfAbsent(_proc.StartInfo.Environment, "CLICOLOR_FORCE", "1");
+        SetEnvIfAbsent(_proc.StartInfo.Environment, "PY_COLORS", "1");
+        SetEnvIfAbsent(_proc.StartInfo.Environment, "TERM", "xterm-256color");
         _proc.OutputDataReceived += (_, e) => { if (e.Data is not null) OnOutput?.Invoke(this, e.Data + "\n"); };
         _proc.ErrorDataReceived += (_, e) => { if (e.Data is not null) OnOutput?.Invoke(this, e.Data + "\n"); };
         _proc.Exited += (_, _) =>
@@ -142,4 +148,10 @@ public sealed class MakeSession : IDisposable
 
     private static string EscapeArg(string s) =>
         "\"" + s.Replace("\"", "\\\"") + "\"";
+
+    private static void SetEnvIfAbsent(System.Collections.Generic.IDictionary<string, string?> env, string key, string value)
+    {
+        if (!env.TryGetValue(key, out var cur) || string.IsNullOrEmpty(cur))
+            env[key] = value;
+    }
 }
