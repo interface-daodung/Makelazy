@@ -1,0 +1,13 @@
+# build outputs
+**/bin/
+**/obj/
+# generated frontend dist (build lại bằng npm run build)
+src/Makelazy.App/wwwroot/
+# frontend deps
+frontend/node_modules/
+frontend/dist/
+# OS / IDE
+.vs/
+*.user
+.DS_Store
+Thumbs.db

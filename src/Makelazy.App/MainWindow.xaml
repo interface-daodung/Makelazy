@@ -1,0 +1,22 @@
+﻿<Window x:Class="Makelazy.App.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        Title="Makelazy — Makefile Runner" Height="760" Width="1180"
+        MinHeight="520" MinWidth="860"
+        WindowStyle="SingleBorderWindow"
+        ResizeMode="CanResizeWithGrip"
+        AllowDrop="True"
+        Background="#EEF2F7">
+    <!-- Kéo co dãn: ResizeMode CanResize + WebView2 DockFill -->
+    <Grid>
+        <wv2:WebView2 x:Name="Web" />
+        <!-- Splash khi WebView2 chưa load -->
+        <Grid x:Name="Splash" Background="#EEF2F7">
+            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" MaxWidth="560">
+                <TextBlock Text="⚡ Makelazy" FontSize="34" FontWeight="Bold" Foreground="#0F172A" HorizontalAlignment="Center"/>
+                <TextBlock x:Name="SplashMsg" Text="Đang khởi động terminal…" FontSize="14" Foreground="#64748B" HorizontalAlignment="Center" Margin="0,8,0,0" TextWrapping="Wrap" TextAlignment="Center"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Window>

@@ -1,0 +1,31 @@
+## Build project mẫu để test Makelazy
+
+.PHONY: build run test clean hello
+
+## Build thử (in ra hello)
+build:
+	@echo Building...
+	@echo Hello from Makelazy
+	@go version || echo "no go (demo only)"
+
+## Chạy app demo
+run: build
+	@echo Running app...
+	@ping -n 3 127.0.0.1 >nul
+	@echo Done run
+
+## Test đếm 1..5 với delay
+test:
+	@echo line 1
+	@ping -n 2 127.0.0.1 >nul
+	@echo line 2
+	@ping -n 2 127.0.0.1 >nul
+	@echo line 3 error demo 1>&2
+	@echo line 4
+	@echo line 5 OK
+
+hello:
+	@echo Hello world
+
+clean:
+	@echo Cleaning...
