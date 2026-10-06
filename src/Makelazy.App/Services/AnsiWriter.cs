@@ -13,49 +13,75 @@ public sealed class AnsiWriter
 {
     private const int MaxBlocks = 4000;
 
-    private static readonly Brush DefaultFg = new SolidColorBrush(Color.FromRgb(0x1F, 0x23, 0x28));
-    private static readonly Brush MutedFg = new SolidColorBrush(Color.FromRgb(0x6E, 0x77, 0x81));
+    private static Brush B(byte r, byte g, byte b) =>
+        new SolidColorBrush(Color.FromRgb(r, g, b));
 
-    private static readonly Dictionary<int, Brush> FgMap = new()
+    // Palette sáng (nền trắng) / tối (nền #0D1117)
+    private static readonly Brush LightDefault = B(0x1F, 0x23, 0x28);
+    private static readonly Brush LightMuted = B(0x6E, 0x77, 0x81);
+    private static readonly Dictionary<int, Brush> LightFg = new()
     {
-        [30] = new SolidColorBrush(Color.FromRgb(0x24, 0x29, 0x2F)),
-        [31] = new SolidColorBrush(Color.FromRgb(0xCF, 0x22, 0x2E)),
-        [32] = new SolidColorBrush(Color.FromRgb(0x11, 0x63, 0x29)),
-        [33] = new SolidColorBrush(Color.FromRgb(0x9A, 0x67, 0x00)),
-        [34] = new SolidColorBrush(Color.FromRgb(0x09, 0x69, 0xDA)),
-        [35] = new SolidColorBrush(Color.FromRgb(0x82, 0x50, 0xDF)),
-        [36] = new SolidColorBrush(Color.FromRgb(0x1B, 0x7C, 0x83)),
-        [37] = MutedFg,
-        [90] = new SolidColorBrush(Color.FromRgb(0x57, 0x60, 0x6A)),
-        [91] = new SolidColorBrush(Color.FromRgb(0xA4, 0x0E, 0x26)),
-        [92] = new SolidColorBrush(Color.FromRgb(0x1A, 0x7F, 0x37)),
-        [93] = new SolidColorBrush(Color.FromRgb(0xBF, 0x87, 0x00)),
-        [94] = new SolidColorBrush(Color.FromRgb(0x21, 0x8B, 0xFF)),
-        [95] = new SolidColorBrush(Color.FromRgb(0xA4, 0x75, 0xF9)),
-        [96] = new SolidColorBrush(Color.FromRgb(0x31, 0x92, 0xAA)),
-        [97] = new SolidColorBrush(Color.FromRgb(0x8C, 0x95, 0x9F)),
+        [30] = B(0x24, 0x29, 0x2F), [31] = B(0xCF, 0x22, 0x2E),
+        [32] = B(0x11, 0x63, 0x29), [33] = B(0x9A, 0x67, 0x00),
+        [34] = B(0x09, 0x69, 0xDA), [35] = B(0x82, 0x50, 0xDF),
+        [36] = B(0x1B, 0x7C, 0x83), [37] = LightMuted,
+        [90] = B(0x57, 0x60, 0x6A), [91] = B(0xA4, 0x0E, 0x26),
+        [92] = B(0x1A, 0x7F, 0x37), [93] = B(0xBF, 0x87, 0x00),
+        [94] = B(0x21, 0x8B, 0xFF), [95] = B(0xA4, 0x75, 0xF9),
+        [96] = B(0x31, 0x92, 0xAA), [97] = B(0x8C, 0x95, 0x9F),
     };
-
-    private static readonly Dictionary<int, Brush> BgMap = new()
+    private static readonly Dictionary<int, Brush> LightBg = new()
     {
-        [40] = new SolidColorBrush(Color.FromRgb(0x24, 0x29, 0x2F)),
-        [41] = new SolidColorBrush(Color.FromRgb(0xFF, 0xEB, 0xE9)),
-        [42] = new SolidColorBrush(Color.FromRgb(0xD8, 0xF3, 0xDC)),
-        [43] = new SolidColorBrush(Color.FromRgb(0xFF, 0xF5, 0xCC)),
-        [44] = new SolidColorBrush(Color.FromRgb(0xDD, 0xF4, 0xFF)),
-        [45] = new SolidColorBrush(Color.FromRgb(0xF1, 0xE8, 0xFF)),
-        [46] = new SolidColorBrush(Color.FromRgb(0xD5, 0xF1, 0xF3)),
-        [47] = new SolidColorBrush(Color.FromRgb(0xEA, 0xEE, 0xF2)),
+        [40] = B(0x24, 0x29, 0x2F), [41] = B(0xFF, 0xEB, 0xE9),
+        [42] = B(0xD8, 0xF3, 0xDC), [43] = B(0xFF, 0xF5, 0xCC),
+        [44] = B(0xDD, 0xF4, 0xFF), [45] = B(0xF1, 0xE8, 0xFF),
+        [46] = B(0xD5, 0xF1, 0xF3), [47] = B(0xEA, 0xEE, 0xF2),
+    };
+    private static readonly Brush DarkDefault = B(0xE6, 0xED, 0xF3);
+    private static readonly Brush DarkMuted = B(0x8B, 0x94, 0x9E);
+    private static readonly Dictionary<int, Brush> DarkFg = new()
+    {
+        [30] = B(0x48, 0x4F, 0x58), [31] = B(0xFF, 0x7B, 0x72),
+        [32] = B(0x3F, 0xB9, 0x50), [33] = B(0xD2, 0x99, 0x22),
+        [34] = B(0x58, 0xA6, 0xFF), [35] = B(0xBC, 0x8C, 0xFF),
+        [36] = B(0x39, 0xC5, 0xCF), [37] = B(0xB1, 0xBA, 0xC4),
+        [90] = B(0x6E, 0x76, 0x81), [91] = B(0xFF, 0xA1, 0x98),
+        [92] = B(0x56, 0xD3, 0x64), [93] = B(0xE3, 0xB3, 0x41),
+        [94] = B(0x79, 0xC0, 0xFF), [95] = B(0xD2, 0xA8, 0xFF),
+        [96] = B(0x56, 0xD4, 0xDD), [97] = B(0xF0, 0xF6, 0xFC),
+    };
+    private static readonly Dictionary<int, Brush> DarkBg = new()
+    {
+        [40] = B(0x16, 0x1B, 0x22), [41] = B(0x5C, 0x22, 0x22),
+        [42] = B(0x1F, 0x4D, 0x2E), [43] = B(0x5C, 0x4A, 0x1E),
+        [44] = B(0x1E, 0x3A, 0x5C), [45] = B(0x3D, 0x2A, 0x5C),
+        [46] = B(0x1E, 0x4A, 0x4E), [47] = B(0x30, 0x36, 0x3D),
     };
 
     private readonly FlowDocument _doc;
     private readonly StringBuilder _buf = new();
     private readonly List<Run> _lineRuns = new();
-    private Brush _fg = DefaultFg;
+    private Brush _fg = LightDefault;
+    private Brush _muted = LightMuted;
     private Brush _bg = Brushes.Transparent;
+    private Dictionary<int, Brush> _fgMap = LightFg;
+    private Dictionary<int, Brush> _bgMap = LightBg;
     private bool _bold;
+    private bool _dark;
 
     public AnsiWriter(FlowDocument doc) => _doc = doc;
+
+    /// <summary>Đổi palette theo theme. Output cũ giữ màu cũ, output mới dùng palette mới.</summary>
+    public void ApplyTheme(bool dark)
+    {
+        _dark = dark;
+        _fg = dark ? DarkDefault : LightDefault;
+        _muted = dark ? DarkMuted : LightMuted;
+        _fgMap = dark ? DarkFg : LightFg;
+        _bgMap = dark ? DarkBg : LightBg;
+        _bg = Brushes.Transparent;
+        _bold = false;
+    }
 
     public void Append(string data)
     {
@@ -94,7 +120,7 @@ public sealed class AnsiWriter
     public void AppendEcho(string text)
     {
         FlushBuffer();
-        var r = new Run(text.TrimEnd('\r', '\n')) { Foreground = MutedFg };
+        var r = new Run(text.TrimEnd('\r', '\n')) { Foreground = _muted };
         _lineRuns.Add(r);
         FlushLine();
     }
@@ -132,7 +158,7 @@ public sealed class AnsiWriter
 
     private void ResetStyle()
     {
-        _fg = DefaultFg;
+        _fg = _dark ? DarkDefault : LightDefault;
         _bg = Brushes.Transparent;
         _bold = false;
     }
@@ -180,11 +206,11 @@ public sealed class AnsiWriter
             if (code == 0) ResetStyle();
             else if (code == 1) _bold = true;
             else if (code == 22) _bold = false;
-            else if (code == 39) _fg = DefaultFg;
+            else if (code == 39) _fg = _dark ? DarkDefault : LightDefault;
             else if (code == 49) _bg = Brushes.Transparent;
-            else if (FgMap.TryGetValue(code, out var f)) _fg = f;
-            else if (BgMap.TryGetValue(code, out var b)) _bg = b;
-            else if (code >= 100 && code <= 107 && BgMap.TryGetValue(code - 60, out var bb)) _bg = bb;
+            else if (_fgMap.TryGetValue(code, out var f)) _fg = f;
+            else if (_bgMap.TryGetValue(code, out var b)) _bg = b;
+            else if (code >= 100 && code <= 107 && _bgMap.TryGetValue(code - 60, out var bb)) _bg = bb;
         }
     }
 }

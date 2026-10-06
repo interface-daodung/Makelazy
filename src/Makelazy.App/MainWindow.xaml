@@ -6,11 +6,27 @@
         MinHeight="520" MinWidth="860"
         ResizeMode="CanResizeWithGrip"
         AllowDrop="True"
-        Background="#F1F5F9">
+        Background="{DynamicResource WinBg}">
     <Window.Resources>
         <local:StringJoinConverter x:Key="Join"/>
         <local:NonEmptyToVisibilityConverter x:Key="NonEmptyVis"/>
         <BooleanToVisibilityConverter x:Key="BoolVis"/>
+
+        <!-- ============ THEME (code-behind đổi Color lúc toggle) ============ -->
+        <SolidColorBrush x:Key="WinBg" Color="#F1F5F9"/>
+        <SolidColorBrush x:Key="HeaderBg" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="Border1" Color="#E2E8F0"/>
+        <SolidColorBrush x:Key="Text1" Color="#1E293B"/>
+        <SolidColorBrush x:Key="Text2" Color="#64748B"/>
+        <SolidColorBrush x:Key="Text3" Color="#94A3B8"/>
+        <SolidColorBrush x:Key="CardBg" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="SubtleBg" Color="#F8FAFC"/>
+        <SolidColorBrush x:Key="TermBg" Color="#FFFFFF"/>
+        <SolidColorBrush x:Key="NameFg" Color="#0E7490"/>
+        <SolidColorBrush x:Key="BadgeBg" Color="#EDE9FE"/>
+        <SolidColorBrush x:Key="BadgeFg" Color="#7C3AED"/>
+        <SolidColorBrush x:Key="Accent" Color="#0891B2"/>
+        <SolidColorBrush x:Key="TabSelBorder" Color="#06B6D4"/>
 
         <!-- Nút bo tròn -->
         <Style x:Key="RoundBtn" TargetType="Button">
@@ -56,11 +72,60 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Tab bo tròn góc trên -->
+        <Style x:Key="RoundedTabItem" TargetType="TabItem">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabItem">
+                        <Border x:Name="Bd" CornerRadius="10,10,0,0"
+                                Background="{DynamicResource CardBg}"
+                                BorderBrush="{DynamicResource Border1}"
+                                BorderThickness="1,1,1,0"
+                                Padding="10,7" Margin="3,0,3,0">
+                            <ContentPresenter ContentSource="Header"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource SubtleBg}"/>
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource TabSelBorder}"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{DynamicResource TabSelBorder}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="RoundedTabs" TargetType="TabControl">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TabControl">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TabPanel Grid.Row="0" Panel.ZIndex="1" Margin="10,6,10,0"
+                                      IsItemsHost="True" Background="Transparent"/>
+                            <Border Grid.Row="1" Background="Transparent" BorderThickness="0" Padding="0">
+                                <ContentPresenter ContentSource="SelectedContent"/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
 
     <DockPanel>
         <!-- Header -->
-        <Border DockPanel.Dock="Top" Background="White" BorderBrush="#E2E8F0" BorderThickness="0,0,0,1" Padding="12,8">
+        <Border DockPanel.Dock="Top" Background="{DynamicResource HeaderBg}" BorderBrush="{DynamicResource Border1}" BorderThickness="0,0,0,1" Padding="12,8">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -78,33 +143,35 @@
                         <TextBlock Text="⚡" FontSize="16" HorizontalAlignment="Center" VerticalAlignment="Center"/>
                     </Border>
                     <StackPanel Margin="10,0,0,0" VerticalAlignment="Center">
-                        <TextBlock FontSize="13" FontWeight="SemiBold" Foreground="#1E293B">
-                            Makelazy <Run Foreground="#0891B2">· Makefile Runner</Run>
+                        <TextBlock FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource Text1}">
+                            Makelazy <Run Foreground="{DynamicResource Accent}">· Makefile Runner</Run>
                         </TextBlock>
-                        <TextBlock x:Name="FilePathText" FontSize="11" Foreground="#64748B" TextTrimming="CharacterEllipsis" MaxWidth="520"
+                        <TextBlock x:Name="FilePathText" FontSize="11" Foreground="{DynamicResource Text2}" TextTrimming="CharacterEllipsis" MaxWidth="520"
                                    Text="Chưa mở Makefile — bấm “Mở Makefile” hoặc kéo-thả file vào cửa sổ"/>
                     </StackPanel>
                 </StackPanel>
                 <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
-                    <Border BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="10" Background="#F8FAFC" Padding="10,4" Margin="0,0,8,0" VerticalAlignment="Center">
-                        <TextBlock FontSize="11" Foreground="#475569"><Run x:Name="TargetCountText" Text="0"/> targets</TextBlock>
+                    <Border BorderBrush="{DynamicResource Border1}" BorderThickness="1" CornerRadius="10" Background="{DynamicResource SubtleBg}" Padding="10,4" Margin="0,0,8,0" VerticalAlignment="Center">
+                        <TextBlock FontSize="11" Foreground="{DynamicResource Text2}"><Run x:Name="TargetCountText" Text="0"/> targets</TextBlock>
                     </Border>
-                    <Button x:Name="PinButton" Style="{StaticResource RoundBtn}" Background="White" BorderBrush="#E2E8F0" Foreground="#475569"
+                    <Button x:Name="ThemeButton" Style="{StaticResource RoundBtn}" Background="{DynamicResource CardBg}" BorderBrush="{DynamicResource Border1}" Foreground="{DynamicResource Text2}"
+                            FontSize="12" FontWeight="SemiBold" Margin="0,0,8,0" Click="ThemeButton_Click" Content="🌙 Tối" ToolTip="Đổi giao diện sáng/tối"/>
+                    <Button x:Name="PinButton" Style="{StaticResource RoundBtn}" Background="{DynamicResource CardBg}" BorderBrush="{DynamicResource Border1}" Foreground="{DynamicResource Text2}"
                             FontSize="12" FontWeight="SemiBold" Margin="0,0,8,0" Click="PinButton_Click" Content="📌 Ghim Open-With"/>
-                    <Button Style="{StaticResource RoundBtn}" Background="#0891B2" BorderBrush="#0891B2" Foreground="White"
+                    <Button Style="{StaticResource RoundBtn}" Background="{DynamicResource Accent}" BorderBrush="{DynamicResource Accent}" Foreground="White"
                             FontSize="12" FontWeight="SemiBold" Click="OpenButton_Click" Content="📂 Mở Makefile"/>
                 </StackPanel>
             </Grid>
         </Border>
 
         <!-- Status bar -->
-        <StatusBar DockPanel.Dock="Bottom" Background="White" BorderBrush="#E2E8F0" BorderThickness="0,1,0,0">
+        <StatusBar DockPanel.Dock="Bottom" Background="{DynamicResource HeaderBg}" BorderBrush="{DynamicResource Border1}" BorderThickness="0,1,0,0">
             <StatusBarItem>
-                <TextBlock x:Name="StatusText" FontSize="11" Foreground="#94A3B8"
+                <TextBlock x:Name="StatusText" FontSize="11" Foreground="{DynamicResource Text3}"
                            Text="Terminal ẩn (CreateNoWindow) · stream trực tiếp · gõ stdin ở ô dưới mỗi tab"/>
             </StatusBarItem>
             <StatusBarItem HorizontalAlignment="Right">
-                <TextBlock x:Name="SessionInfoText" FontSize="11" Foreground="#94A3B8" FontFamily="Consolas"/>
+                <TextBlock x:Name="SessionInfoText" FontSize="11" Foreground="{DynamicResource Text3}" FontFamily="Consolas"/>
             </StatusBarItem>
         </StatusBar>
 
@@ -117,20 +184,20 @@
             </Grid.ColumnDefinitions>
 
             <!-- LEFT: targets -->
-            <DockPanel Grid.Column="0" Background="White">
+            <DockPanel Grid.Column="0" Background="{DynamicResource HeaderBg}">
                 <TextBox x:Name="SearchBox" DockPanel.Dock="Top" Margin="12,12,12,8" Padding="8,6"
-                         BorderBrush="#E2E8F0" FontSize="12" Foreground="#1E293B"
+                         BorderBrush="{DynamicResource Border1}" Foreground="{DynamicResource Text1}" FontSize="12"
                          TextChanged="SearchBox_TextChanged">
                     <TextBox.Resources>
                         <VisualBrush x:Key="Hint" AlignmentX="Left" Stretch="None">
                             <VisualBrush.Visual>
-                                <TextBlock Text="🔍 Tìm target / lệnh…" Foreground="#94A3B8" FontSize="12" Margin="4,0"/>
+                                <TextBlock Text="🔍 Tìm target / lệnh…" Foreground="{DynamicResource Text3}" FontSize="12" Margin="4,0"/>
                             </VisualBrush.Visual>
                         </VisualBrush>
                     </TextBox.Resources>
                     <TextBox.Style>
                         <Style TargetType="TextBox">
-                            <Setter Property="Background" Value="#F8FAFC"/>
+                            <Setter Property="Background" Value="{DynamicResource SubtleBg}"/>
                             <Style.Triggers>
                                 <Trigger Property="Text" Value="">
                                     <Setter Property="Background" Value="{StaticResource Hint}"/>
@@ -139,7 +206,7 @@
                         </Style>
                     </TextBox.Style>
                 </TextBox>
-                <ListBox x:Name="TargetList" BorderThickness="0" Background="White" Padding="8,0,8,8"
+                <ListBox x:Name="TargetList" BorderThickness="0" Background="{DynamicResource HeaderBg}" Padding="8,0,8,8"
                          ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListBox.ItemContainerStyle>
                         <Style TargetType="ListBoxItem">
@@ -158,34 +225,34 @@
                     </ListBox.ItemContainerStyle>
                     <ListBox.ItemTemplate>
                         <DataTemplate>
-                            <Border BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="10" Background="White" Padding="10">
+                            <Border BorderBrush="{DynamicResource Border1}" BorderThickness="1" CornerRadius="10" Background="{DynamicResource CardBg}" Padding="10">
                                 <DockPanel>
                                     <Button DockPanel.Dock="Left" Style="{StaticResource PlayBtn}" Content="▶"
                                             Tag="{Binding Name}" Click="RunButton_Click" ToolTip="Chạy target này"
                                             VerticalAlignment="Top" Margin="0,0,10,0"/>
                                     <StackPanel>
                                         <StackPanel Orientation="Horizontal">
-                                            <TextBlock FontFamily="Consolas" FontSize="13" FontWeight="Bold" Foreground="#0E7490" Text="{Binding Name}"/>
-                                            <Border Background="#EDE9FE" CornerRadius="4" Padding="5,1" Margin="6,0,0,0" VerticalAlignment="Center"
+                                            <TextBlock FontFamily="Consolas" FontSize="13" FontWeight="Bold" Foreground="{DynamicResource NameFg}" Text="{Binding Name}"/>
+                                            <Border Background="{DynamicResource BadgeBg}" CornerRadius="4" Padding="5,1" Margin="6,0,0,0" VerticalAlignment="Center"
                                                     Visibility="{Binding IsPhony, Converter={StaticResource BoolVis}}">
-                                                <TextBlock Text="PHONY" FontSize="9" FontWeight="SemiBold" Foreground="#7C3AED"/>
+                                                <TextBlock Text="PHONY" FontSize="9" FontWeight="SemiBold" Foreground="{DynamicResource BadgeFg}"/>
                                             </Border>
-                                            <TextBlock FontSize="10" Foreground="#94A3B8" Margin="6,0,0,0" VerticalAlignment="Center">
+                                            <TextBlock FontSize="10" Foreground="{DynamicResource Text3}" Margin="6,0,0,0" VerticalAlignment="Center">
                                                 <Run Text=":"/><Run Text="{Binding Line}"/>
                                             </TextBlock>
                                         </StackPanel>
-                                        <TextBlock FontSize="11" Foreground="#64748B" Text="{Binding Description}" TextTrimming="CharacterEllipsis"
+                                        <TextBlock FontSize="11" Foreground="{DynamicResource Text2}" Text="{Binding Description}" TextTrimming="CharacterEllipsis"
                                                    Visibility="{Binding Description, Converter={StaticResource NonEmptyVis}}"/>
-                                        <TextBlock FontSize="11" Foreground="#94A3B8" TextTrimming="CharacterEllipsis"
+                                        <TextBlock FontSize="11" Foreground="{DynamicResource Text3}" TextTrimming="CharacterEllipsis"
                                                    Visibility="{Binding Dependencies, Converter={StaticResource NonEmptyVis}}">
                                             <Run Text="deps: "/><Run Text="{Binding Dependencies, Converter={StaticResource Join}, ConverterParameter=' '}"/>
                                         </TextBlock>
-                                        <Expander Header="recipe" FontSize="11" Foreground="#64748B" Margin="0,2,0,0">
+                                        <Expander Header="recipe" FontSize="11" Foreground="{DynamicResource Text2}" Margin="0,2,0,0">
                                             <ItemsControl ItemsSource="{Binding Commands}" Margin="0,4,0,0">
                                                 <ItemsControl.ItemTemplate>
                                                     <DataTemplate>
-                                                        <Border Background="#F8FAFC" BorderBrush="#E2E8F0" BorderThickness="1" CornerRadius="5" Padding="6,3" Margin="0,0,0,3">
-                                                            <TextBlock FontFamily="Consolas" FontSize="11" Foreground="#334155" TextWrapping="Wrap">
+                                                        <Border Background="{DynamicResource SubtleBg}" BorderBrush="{DynamicResource Border1}" BorderThickness="1" CornerRadius="5" Padding="6,3" Margin="0,0,0,3">
+                                                            <TextBlock FontFamily="Consolas" FontSize="11" Foreground="{DynamicResource Text1}" TextWrapping="Wrap">
                                                                 <Run Text="$ "/><Run Text="{Binding Mode=OneWay}"/>
                                                             </TextBlock>
                                                         </Border>
@@ -204,16 +271,17 @@
             <GridSplitter Grid.Column="1" Width="4" Background="Transparent" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
 
             <!-- RIGHT: tabs terminal -->
-            <Grid Grid.Column="2" Background="#F1F5F9">
-                <TabControl x:Name="SessionTabs" Background="#F1F5F9" BorderThickness="0" Padding="0"
+            <Grid Grid.Column="2" Background="{DynamicResource WinBg}">
+                <TabControl x:Name="SessionTabs" Style="{StaticResource RoundedTabs}"
+                            ItemContainerStyle="{StaticResource RoundedTabItem}"
                             SelectionChanged="SessionTabs_SelectionChanged"/>
-                <Border x:Name="EmptyHint" BorderBrush="#CBD5E1" BorderThickness="1" CornerRadius="12" Background="White"
+                <Border x:Name="EmptyHint" BorderBrush="{DynamicResource Border1}" BorderThickness="1" CornerRadius="12" Background="{DynamicResource CardBg}"
                         Margin="12" Padding="0"
                         HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
                     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                         <TextBlock Text="🖥️" FontSize="44" HorizontalAlignment="Center"/>
-                        <TextBlock Text="Output của process sẽ hiện ở đây." FontSize="13" Foreground="#64748B" HorizontalAlignment="Center" Margin="0,10,0,0"/>
-                        <TextBlock Text="Mỗi lần bấm ▶ là 1 tab terminal riêng, stream trực tiếp." FontSize="11" Foreground="#94A3B8" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                        <TextBlock Text="Output của process sẽ hiện ở đây." FontSize="13" Foreground="{DynamicResource Text2}" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                        <TextBlock Text="Mỗi lần bấm ▶ là 1 tab terminal riêng, stream trực tiếp." FontSize="11" Foreground="{DynamicResource Text3}" HorizontalAlignment="Center" Margin="0,4,0,0"/>
                     </StackPanel>
                 </Border>
             </Grid>
