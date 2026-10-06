@@ -134,7 +134,7 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                    <Image Width="32" Height="32" Source="MakeLazy.ico"
+                    <Image x:Name="AppIconImage" Width="32" Height="32" Source="MakeLazy.ico"
                            RenderOptions.BitmapScalingMode="HighQuality" VerticalAlignment="Center"/>
                     <StackPanel Margin="10,0,0,0" VerticalAlignment="Center">
                         <TextBlock FontSize="13" FontWeight="SemiBold" Foreground="{DynamicResource Text1}">

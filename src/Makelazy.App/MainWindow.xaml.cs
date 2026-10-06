@@ -6,6 +6,7 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using System.Windows.Threading;
 using Microsoft.Win32;
 using Makelazy.App.Models;
@@ -86,6 +87,7 @@ public partial class MainWindow : Window
     public MainWindow()
     {
         InitializeComponent();
+        SetCrispAppIcon();
         Drop += OnDrop;
         Loaded += (_, _) =>
         {
@@ -164,6 +166,27 @@ public partial class MainWindow : Window
         s.Input.BorderBrush = Res("Border1");
         s.Container.Background = Res("CardBg");
         s.Container.BorderBrush = Res("Border1");
+    }
+
+    /// <summary>
+    /// .ico chứa nhiều frame (16/32/48/256px). WPF mặc định lấy frame đầu (nhỏ nhất)
+    /// nên phóng lên 32px bị mờ — ép lấy frame lớn nhất rồi downscale cho nét.
+    /// </summary>
+    private void SetCrispAppIcon()
+    {
+        try
+        {
+            var decoder = new IconBitmapDecoder(
+                new Uri("pack://application:,,,/MakeLazy.ico"),
+                BitmapCreateOptions.PreservePixelFormat,
+                BitmapCacheOption.OnLoad);
+            var best = decoder.Frames
+                .OrderByDescending(f => f.PixelWidth * f.PixelHeight)
+                .FirstOrDefault();
+            if (best is not null)
+                AppIconImage.Source = best;
+        }
+        catch { /* giữ fallback Source trong XAML */ }
     }
 
     // ---------- Mở file ----------
