@@ -22,7 +22,15 @@ public sealed class MakeSession : IDisposable
     public string MakefilePath { get; }
     public bool DirectMode { get; }
     public int? ExitCode { get; private set; }
-    public bool IsRunning => !_proc.HasExited;
+    public bool IsRunning
+    {
+        get
+        {
+            // Process chưa Start() thì HasExited ném InvalidOperationException
+            try { return !_proc.HasExited; }
+            catch { return false; }
+        }
+    }
 
     public event Action<MakeSession, string>? OnOutput;
     public event Action<MakeSession, int>? OnExit;

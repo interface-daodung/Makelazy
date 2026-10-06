@@ -1,6 +1,7 @@
 # build outputs
 **/bin/
 **/obj/
+frontend/*.tsbuildinfo
 # generated frontend dist (build lại bằng npm run build)
 src/Makelazy.App/wwwroot/
 # frontend deps

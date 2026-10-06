@@ -1,5 +1,9 @@
 # Makelazy — Makefile Runner (WPF + WebView2 + React/xterm)
 
+> **Nhánh `native-wpf` (bạn đang ở đây): UI WPF thuần, KHÔNG WebView2.**
+> Mở file `Makefile` → nút ▶ WPF thật → chạy process ẩn → tab terminal render ANSI bằng RichTextBox.
+> Nhánh `main`: bản WebView2 + React/xterm (đẹp hơn nhưng cần WebView2 Runtime + cầu nối JS/C#).
+
 Mở file tên `Makefile` (không đuôi) → hiện các target thành nút ▶ → bấm chạy trong process ẩn → stream output ra tab terminal đẹp (xterm.js).
 
 ## Stack
