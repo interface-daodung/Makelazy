@@ -16,6 +16,23 @@ public partial class App : Application
 
         var opts = CliOptions.Parse(e.Args);
 
+        // File truyền vào sai tên (không phải makefile/Makefile):
+        // báo lỗi rồi thoát ngay, không mở giao diện.
+        if (opts.RejectedPath is not null)
+        {
+            if (opts.IsCliVerb)
+            {
+                RunCliVerb(opts); // in lỗi ra console rồi thoát
+            }
+            else
+            {
+                MessageBox.Show(CliOptions.UnsupportedFileMessage(opts.RejectedPath),
+                    "Makelazy", MessageBoxButton.OK, MessageBoxImage.Warning);
+            }
+            Shutdown();
+            return;
+        }
+
         // Verb CLI: chạy console rồi thoát, không mở GUI
         if (opts.IsCliVerb)
         {
@@ -59,7 +76,11 @@ public partial class App : Application
         Console.OutputEncoding = Encoding.UTF8;
         try
         {
-            if (opts.Help) { Console.WriteLine(CliOptions.HelpText); }
+            if (opts.RejectedPath is not null)
+            {
+                Console.WriteLine(CliOptions.UnsupportedFileMessage(opts.RejectedPath));
+            }
+            else if (opts.Help) { Console.WriteLine(CliOptions.HelpText); }
             else if (opts.Version)
             {
                 var v = Assembly.GetExecutingAssembly().GetName().Version;

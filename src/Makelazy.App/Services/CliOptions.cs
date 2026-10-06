@@ -20,12 +20,34 @@ public sealed class CliOptions
 
     public bool IsCliVerb => ListTargets || Register || Unregister || Help || Version;
 
+    /// <summary>
+    /// Path file/thư mục truyền vào nhưng bị từ chối vì tên file không phải
+    /// "makefile"/"Makefile". App dùng để báo lỗi rồi thoát (không mở GUI).
+    /// </summary>
+    public string? RejectedPath { get; set; }
+
+    /// <summary>Tên file phải chính xác là "makefile" hoặc "Makefile" (so khớp tuyệt đối).</summary>
+    public static bool IsAcceptedMakefileName(string? path)
+    {
+        if (string.IsNullOrWhiteSpace(path)) return false;
+        var name = Path.GetFileName(path.Trim().Trim('"'));
+        return name.Equals("makefile", StringComparison.Ordinal)
+            || name.Equals("Makefile", StringComparison.Ordinal);
+    }
+
+    public static string UnsupportedFileMessage(string? rawPath)
+    {
+        var name = string.IsNullOrWhiteSpace(rawPath) ? "?" : Path.GetFileName(rawPath.Trim().Trim('"'));
+        return $"File \"{name}\" không được hỗ trợ.\nMakelazy chỉ mở file có tên chính xác là \"Makefile\" hoặc \"makefile\".";
+    }
+
     public const string HelpText =
 @"Makelazy — Makefile Runner
 Dùng: Makelazy.exe [Makefile | thư-mục] [tùy-chọn]
 
-  [Makefile]              File 'Makefile' (không đuôi). Kéo-thả, Open-With,
-                          double-click sau khi --register đều truyền path vào đây.
+  [Makefile]              File tên chính xác 'Makefile' hoặc 'makefile' (không đuôi).
+                          Kéo-thả, Open-With, double-click sau khi --register
+                          đều truyền path vào đây. File khác tên sẽ bị từ chối.
                           Truyền thư-mục cũng được (tự tìm Makefile bên trong).
   -t, --target <name>     Tự chạy target ngay sau khi mở file (mở GUI).
   -l, --list              Chỉ in danh sách target ra console rồi thoát (không mở GUI).
@@ -47,6 +69,7 @@ Ví dụ:
         var o = new CliOptions();
         string? pendingTargetOpt = null;
         bool expectTarget = false;
+        string? positionalRaw = null;
 
         foreach (var raw in argsNoExe)
         {
@@ -74,12 +97,34 @@ Ví dụ:
                 continue; // flag lạ: bỏ qua cho nhẹ
 
             // positional đầu tiên = path file/thư mục
+            if (positionalRaw is null)
+                positionalRaw = a;
             if (o.MakefilePath is null)
                 o.MakefilePath = ResolveMakefilePath(a);
         }
 
         o.AutoTarget = string.IsNullOrWhiteSpace(pendingTargetOpt) ? null : pendingTargetOpt;
+
+        // Chốt kiểm tra tên file: chỉ chấp nhận đúng "makefile"/"Makefile".
+        // - Truyền file sai tên (kể cả thư-mục resolve ra file sai tên) -> từ chối.
+        if (o.MakefilePath is not null && !IsAcceptedMakefileName(o.MakefilePath))
+        {
+            o.RejectedPath = o.MakefilePath;
+            o.MakefilePath = null;
+        }
+        else if (o.MakefilePath is null && positionalRaw is not null
+                 && !IsAcceptedMakefileName(positionalRaw) && !IsDirectoryPath(positionalRaw))
+        {
+            o.RejectedPath = positionalRaw;
+        }
         return o;
+    }
+
+    private static bool IsDirectoryPath(string raw)
+    {
+        var p = raw.Trim().Trim('"');
+        if (Directory.Exists(p)) return true;
+        return Directory.Exists(Path.Combine(Environment.CurrentDirectory, p));
     }
 
     /// <summary>Chuẩn hoá arg thành path Makefile: file trực tiếp, relative, hoặc thư-mục chứa Makefile.</summary>
