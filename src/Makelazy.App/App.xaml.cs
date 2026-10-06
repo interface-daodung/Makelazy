@@ -93,13 +93,16 @@ public partial class App : Application
                 }
             }
             Console.WriteLine();
-            Console.WriteLine("Nhấn phím bất kỳ để đóng...");
-            Console.ReadKey(intercept: true);
+            if (!opts.Silent)
+            {
+                Console.WriteLine("Nhấn phím bất kỳ để đóng...");
+                Console.ReadKey(intercept: true);
+            }
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Lỗi: {ex.Message}");
-            Console.ReadKey(intercept: true);
+            if (!opts.Silent) Console.ReadKey(intercept: true);
         }
     }
 

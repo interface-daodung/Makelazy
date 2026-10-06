@@ -8,6 +8,7 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>Makelazy</AssemblyName>
     <RootNamespace>Makelazy.App</RootNamespace>
+    <ApplicationIcon>MakeLazy.ico</ApplicationIcon>
     <Version>0.1.0</Version>
   </PropertyGroup>
 

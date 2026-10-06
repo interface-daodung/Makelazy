@@ -9,11 +9,32 @@ Mở file tên `Makefile` (không đuôi) → hiện các target thành nút ▶
 - C# / .NET 10, WPF thuần (kéo co dãn, sáng/tối, tab bo tròn)
 - Backend: `MakefileParser` (target/deps/recipe/`##` desc/`.PHONY`), `MakeSession` (`cmd /c make`, fallback chạy recipe khi chưa cài make, ép `FORCE_COLOR` để tool nhả màu), `AnsiWriter` (render ANSI), `CliOptions`, `FileAssociation`, `SingleInstance`, `ThemeStore`
 
-## Build & chạy
+## Build & chạy (dev)
 ```powershell
 dotnet build Makelazy.slnx -c Release
 # chạy: src/Makelazy.App/bin/Release/net10.0-windows/Makelazy.exe [path/Makefile]
 ```
+
+## Thư viện đang dùng
+- **Không có package NuGet nào** (`dotnet list package` = rỗng).
+- Chỉ dùng framework có sẵn: .NET 10 + `Microsoft.NET.Sdk` + `UseWPF=true`
+  (`PresentationFramework`, `WindowsBase`...), registry qua `Microsoft.Win32`,
+  pipe qua `System.IO.Pipes`. Icon: `MakeLazy.ico`.
+- Máy chạy app cần **.NET 10 Desktop Runtime** (không cần SDK).
+
+## Đóng gói app (Inno Setup 6)
+```powershell
+dotnet build Makelazy.slnx -c Release
+iscc installer\Makelazy.iss
+# -> dist\Makelazy-Setup-0.1.0.exe
+```
+Script `installer/Makelazy.iss` đã lo:
+- Cài per-user (`%LocalAppData%\Makelazy`, không cần admin), icon Start Menu + Desktop (tùy chọn)
+- Tự đóng app đang chạy khi cài (`CloseApplications`)
+- Kiểm tra .NET 10 Desktop Runtime, thiếu thì mở link tải rồi dừng setup
+- Chạy `Makelazy.exe --register --silent` sau khi cài (ghim Open-With),
+  `Makelazy.exe --unregister --silent` khi gỡ cài đặt
+- Đổi version: sửa `Version` trong csproj + `MyAppVersion` trong `.iss` cùng lúc
 
 ## CLI / Open-With
 ```powershell

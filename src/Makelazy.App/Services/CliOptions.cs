@@ -16,6 +16,7 @@ public sealed class CliOptions
     public bool Unregister { get; set; }
     public bool Help { get; set; }
     public bool Version { get; set; }
+    public bool Silent { get; set; } // --silent: không chờ phím (cho installer gọi ngầm)
 
     public bool IsCliVerb => ListTargets || Register || Unregister || Help || Version;
 
@@ -31,6 +32,7 @@ Dùng: Makelazy.exe [Makefile | thư-mục] [tùy-chọn]
   --register              Đăng ký Open-With cho file Makefile (HKCU, không cần admin):
                           double-click file không-đuôi + menu chuột phải thư-mục.
   --unregister            Gỡ đăng ký trên.
+  --silent                Dùng kèm verb trên: không chờ bấm phím (cho installer gọi ngầm).
   -h, --help              Bản trợ giúp này.
   -v, --version           In phiên bản.
 
@@ -59,6 +61,8 @@ Ví dụ:
             { o.ListTargets = true; continue; }
             if (a.Equals("--register", StringComparison.OrdinalIgnoreCase))
             { o.Register = true; continue; }
+            if (a.Equals("--silent", StringComparison.OrdinalIgnoreCase))
+            { o.Silent = true; continue; }
             if (a.Equals("--unregister", StringComparison.OrdinalIgnoreCase))
             { o.Unregister = true; continue; }
             if (a.Equals("-h", StringComparison.OrdinalIgnoreCase) || a.Equals("--help", StringComparison.OrdinalIgnoreCase)
